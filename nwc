@@ -1,0 +1,23 @@
+#! /bin/bash
+#
+# requirement:
+#     mecab
+#     wordcloud-cli
+#     awk
+#     grep
+#
+# setup:
+#     Rewrite the font path specified in the wordcloud_cli argument
+#
+# usage:
+#     nwc < <input> > <output>
+#
+mecab -F "%m,%f[0]\n" | \
+awk -F ',' '
+{
+	if (($2 == "名詞" || $2 == "動詞") && $1 !~ /[a-zA-Z0-9[:punct:]]/) {
+		print $1
+	}
+}' | \
+grep -Ev '^[ぁ-んー]+$' | \
+wordcloud_cli --fontfile /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc --width 1024 --height 786 --background white
